@@ -41,7 +41,7 @@ const Slider = styled.div`
 const Row = styled(motion.div)`
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 10px;
+  gap: 7px;
   position: absolute;
   width: 100%;
 `;
@@ -69,7 +69,13 @@ function Home() {
     getMovies
   );
   const [index, setIndex] = useState(0);
-  const increaseIndex = () => setIndex((prev) => prev + 1);
+  const [isLeaving, setIsLeaving] = useState(false);
+  const increaseIndex = () => {
+    if (isLeaving) return;
+    toggleLeaving();
+    setIndex((prev) => prev + 1);
+  };
+  const toggleLeaving = () => setIsLeaving((prev) => !prev);
 
   return (
     <Wrapper>
@@ -85,7 +91,7 @@ function Home() {
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
           <Slider>
-            <AnimatePresence>
+            <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
                 variants={rowVariants}
                 initial="hidden"
