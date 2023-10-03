@@ -7,6 +7,7 @@ import { useState } from "react";
 
 const Wrapper = styled.div`
   overflow-x: hidden;
+  padding-bottom: 200px;
 `;
 const Loader = styled.div`
   height: 20vh;
@@ -45,10 +46,11 @@ const Row = styled(motion.div)`
   position: absolute;
   width: 100%;
 `;
-const Box = styled(motion.div)`
-  background-color: white;
-  height: 200px;
-  color: red;
+const Box = styled(motion.div)<{ bgPhoto: string }>`
+  height: 150px;
+  background-image: url(${(props) => props.bgPhoto});
+  background-size: cover;
+  background-position: center center;
 `;
 
 const rowVariants = {
@@ -71,12 +73,17 @@ function Home() {
   const [index, setIndex] = useState(0);
   const [isLeaving, setIsLeaving] = useState(false);
   const increaseIndex = () => {
-    if (isLeaving) return;
-    toggleLeaving();
-    setIndex((prev) => prev + 1);
+    if (data) {
+      if (isLeaving) return;
+      toggleLeaving();
+      const totalMovies = data.results.length - 1;
+      const maxIndex = Math.floor(totalMovies / offset) - 1;
+      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+    }
   };
   const toggleLeaving = () => setIsLeaving((prev) => !prev);
 
+  const offset = 6;
   return (
     <Wrapper>
       {isLoading ? (
@@ -100,9 +107,15 @@ function Home() {
                 transition={{ type: "tween", duration: 1 }}
                 key={index}
               >
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <Box key={i}>{i}</Box>
-                ))}
+                {data?.results
+                  .slice(1)
+                  .slice(offset * index, offset * index + offset)
+                  .map((movie) => (
+                    <Box
+                      key={movie.id}
+                      bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
+                    />
+                  ))}
               </Row>
             </AnimatePresence>
           </Slider>
