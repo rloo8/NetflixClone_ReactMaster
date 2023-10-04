@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { makeImagePath } from "../utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useMatch, useNavigate } from "react-router-dom";
 
 // styled-components
 const Wrapper = styled.div`
@@ -48,6 +49,7 @@ const Row = styled(motion.div)`
   width: 100%;
 `;
 const Box = styled(motion.div)<{ bgPhoto: string }>`
+  cursor: pointer;
   height: 150px;
   background-image: url(${(props) => props.bgPhoto});
   background-size: cover;
@@ -110,12 +112,16 @@ const InfoVariants = {
 };
 
 function Home() {
+  const navigate = useNavigate();
+  const bigMovieMatch = useMatch("movies/:id");
+
   const { data, isLoading } = useQuery<IGetMoviesResult>(
     ["movies", "nowPlaying"],
     getMovies
   );
   const [index, setIndex] = useState(0);
   const [isLeaving, setIsLeaving] = useState(false);
+  const offset = 6;
   const increaseIndex = () => {
     if (data) {
       if (isLeaving) return;
@@ -126,8 +132,10 @@ function Home() {
     }
   };
   const toggleLeaving = () => setIsLeaving((prev) => !prev);
+  const onBoxCliked = (movieId: number) => {
+    navigate(`/movies/${movieId}`);
+  };
 
-  const offset = 6;
   return (
     <Wrapper>
       {isLoading ? (
@@ -141,6 +149,7 @@ function Home() {
             <Title>{data?.results[0].title}</Title>
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
+
           <Slider>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
@@ -156,9 +165,11 @@ function Home() {
                   .slice(offset * index, offset * index + offset)
                   .map((movie) => (
                     <Box
+                      layoutId={movie.id + ""}
                       key={movie.id}
                       bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
                       variants={BoxVariants}
+                      onClick={() => onBoxCliked(movie.id)}
                       initial="normal"
                       whileHover="hover"
                       transition={{ type: "tween" }}
@@ -171,6 +182,24 @@ function Home() {
               </Row>
             </AnimatePresence>
           </Slider>
+
+          <AnimatePresence>
+            {bigMovieMatch ? (
+              <motion.div
+                layoutId={bigMovieMatch.params.id}
+                style={{
+                  position: "absolute",
+                  top: 50,
+                  left: 0,
+                  right: 0,
+                  margin: "0 auto",
+                  width: "40vw",
+                  height: "80vh",
+                  backgroundColor: "red",
+                }}
+              />
+            ) : null}
+          </AnimatePresence>
         </>
       )}
     </Wrapper>
