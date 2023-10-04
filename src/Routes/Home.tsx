@@ -73,6 +73,7 @@ const Info = styled(motion.div)`
     text-align: center;
   }
 `;
+
 const Overlay = styled(motion.div)`
   position: fixed;
   top: 0;
@@ -90,7 +91,28 @@ const BigMovie = styled(motion.div)`
   margin: auto;
   width: 40vw;
   height: 80vh;
-  background-color: red;
+  background-color: ${(props) => props.theme.black.lighter};
+  border-radius: 20px;
+  overflow: hidden;
+`;
+const BigCover = styled.div`
+  width: 100%;
+  background-size: cover;
+  background-position: center center;
+  height: 400px;
+`;
+const BigTitle = styled.h3`
+  color: ${(props) => props.theme.white.lighter};
+  padding: 15px;
+  font-size: 25px;
+  position: relative;
+  top: -50px;
+`;
+const BigOverview = styled.p`
+  padding: 15px;
+  color: ${(props) => props.theme.white.lighter};
+  position: relative;
+  top: -50px;
 `;
 
 // motion variant
@@ -155,6 +177,9 @@ function Home() {
     navigate(`/movies/${movieId}`);
   };
   const onOverlayCliked = () => navigate("/");
+  const clickedMovie =
+    bigMovieMatch?.params.id &&
+    data?.results.find((movie) => String(movie.id) === bigMovieMatch.params.id);
 
   return (
     <Wrapper>
@@ -211,7 +236,22 @@ function Home() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 />
-                <BigMovie layoutId={bigMovieMatch.params.id} />
+                <BigMovie layoutId={bigMovieMatch.params.id}>
+                  {clickedMovie && (
+                    <>
+                      <BigCover
+                        style={{
+                          backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
+                            clickedMovie.backdrop_path,
+                            "w500"
+                          )})`,
+                        }}
+                      />
+                      <BigTitle>{clickedMovie.title}</BigTitle>
+                      <BigOverview>{clickedMovie.overview}</BigOverview>
+                    </>
+                  )}
+                </BigMovie>
               </>
             ) : null}
           </AnimatePresence>
