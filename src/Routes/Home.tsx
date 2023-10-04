@@ -73,6 +73,25 @@ const Info = styled(motion.div)`
     text-align: center;
   }
 `;
+const Overlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  opacity: 0;
+`;
+const BigMovie = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 40vw;
+  height: 80vh;
+  background-color: red;
+`;
 
 // motion variant
 const rowVariants = {
@@ -135,6 +154,7 @@ function Home() {
   const onBoxCliked = (movieId: number) => {
     navigate(`/movies/${movieId}`);
   };
+  const onOverlayCliked = () => navigate("/");
 
   return (
     <Wrapper>
@@ -185,19 +205,14 @@ function Home() {
 
           <AnimatePresence>
             {bigMovieMatch ? (
-              <motion.div
-                layoutId={bigMovieMatch.params.id}
-                style={{
-                  position: "absolute",
-                  top: 50,
-                  left: 0,
-                  right: 0,
-                  margin: "0 auto",
-                  width: "40vw",
-                  height: "80vh",
-                  backgroundColor: "red",
-                }}
-              />
+              <>
+                <Overlay
+                  onClick={onOverlayCliked}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                />
+                <BigMovie layoutId={bigMovieMatch.params.id} />
+              </>
             ) : null}
           </AnimatePresence>
         </>
