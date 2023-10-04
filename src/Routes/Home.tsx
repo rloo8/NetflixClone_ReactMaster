@@ -5,6 +5,7 @@ import { makeImagePath } from "../utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
+// styled-components
 const Wrapper = styled.div`
   overflow-x: hidden;
   padding-bottom: 200px;
@@ -51,8 +52,15 @@ const Box = styled(motion.div)<{ bgPhoto: string }>`
   background-image: url(${(props) => props.bgPhoto});
   background-size: cover;
   background-position: center center;
+  &:first-child {
+    transform-origin: center left;
+  }
+  &:last-child {
+    transform-origin: center right;
+  }
 `;
 
+// motion variant
 const rowVariants = {
   hidden: {
     x: window.outerWidth,
@@ -62,6 +70,20 @@ const rowVariants = {
   },
   exit: {
     x: -window.outerWidth,
+  },
+};
+const BoxVariants = {
+  normal: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.2,
+    y: -30,
+    transition: {
+      delay: 0.3,
+      duration: 0.2,
+      type: "tween",
+    },
   },
 };
 
@@ -114,6 +136,10 @@ function Home() {
                     <Box
                       key={movie.id}
                       bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
+                      variants={BoxVariants}
+                      initial="normal"
+                      whileHover="hover"
+                      transition={{ type: "tween" }}
                     />
                   ))}
               </Row>
