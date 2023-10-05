@@ -162,6 +162,7 @@ function Home() {
   );
   const [index, setIndex] = useState(0);
   const [isLeaving, setIsLeaving] = useState(false);
+
   const offset = 6;
   const increaseIndex = () => {
     if (data) {
@@ -173,6 +174,7 @@ function Home() {
     }
   };
   const toggleLeaving = () => setIsLeaving((prev) => !prev);
+
   const onBoxCliked = (movieId: number) => {
     navigate(`/movies/${movieId}`);
   };
